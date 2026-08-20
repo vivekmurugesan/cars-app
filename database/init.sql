@@ -36,8 +36,7 @@ CREATE TABLE users (
     otp_verified BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    last_login TIMESTAMP,
-    INDEX idx_email (email)
+    last_login TIMESTAMP
 );
 
 -- User interests table
@@ -75,9 +74,6 @@ CREATE TABLE cars (
     fun_fact TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_brand_id (brand_id),
-    INDEX idx_category (category),
-    INDEX idx_year (year),
     UNIQUE(brand_id, model, year)
 );
 
@@ -96,7 +92,7 @@ CREATE TABLE car_facts (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     car_id UUID NOT NULL REFERENCES cars(id) ON DELETE CASCADE,
     fact TEXT NOT NULL,
-    fact_type VARCHAR(50), -- e.g., 'speed', 'design', 'innovation'
+    fact_type VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -122,7 +118,7 @@ CREATE TABLE user_garage (
 CREATE TABLE trivia_facts (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     fact TEXT NOT NULL,
-    difficulty VARCHAR(20), -- 'easy', 'medium', 'hard'
+    difficulty VARCHAR(20),
     category VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -187,11 +183,7 @@ CREATE TABLE user_bookmarks (
     car_fact_id UUID REFERENCES car_facts(id) ON DELETE CASCADE,
     trivia_fact_id UUID REFERENCES trivia_facts(id) ON DELETE CASCADE,
     bookmark_type VARCHAR(50) NOT NULL,
-    bookmarked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CHECK (
-        (car_fact_id IS NOT NULL AND trivia_fact_id IS NULL) OR
-        (car_fact_id IS NULL AND trivia_fact_id IS NOT NULL)
-    )
+    bookmarked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- User badges/achievements table
@@ -226,7 +218,11 @@ CREATE TABLE trending_cars (
 );
 
 -- Create indexes for performance
+CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_user_interests_user_id ON user_interests(user_id);
+CREATE INDEX idx_cars_brand_id ON cars(brand_id);
+CREATE INDEX idx_cars_category ON cars(category);
+CREATE INDEX idx_cars_year ON cars(year);
 CREATE INDEX idx_car_images_car_id ON car_images(car_id);
 CREATE INDEX idx_car_facts_car_id ON car_facts(car_id);
 CREATE INDEX idx_car_audio_clips_car_id ON car_audio_clips(car_id);
@@ -261,7 +257,3 @@ VALUES
     ('Electric vehicles produce zero emissions!', 'easy', 'environment'),
     ('The first traffic light was installed in 1868 in London!', 'medium', 'history')
 ON CONFLICT DO NOTHING;
-
--- Grant permissions (if needed)
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO postgres;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO postgres;
