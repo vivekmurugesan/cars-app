@@ -9,7 +9,6 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
       POSTGRES_DB: cars_app
-      POSTGRES_INITDB_ARGS: "-c max_connections=200"
     ports:
       - "${DB_PORT:-5432}:5432"
     volumes:
