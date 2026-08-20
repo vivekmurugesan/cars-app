@@ -110,18 +110,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- AI/ML SDKs -->
-        <dependency>
-            <groupId>com.google.ai.client.generativeai</groupId>
-            <artifactId>generative-ai</artifactId>
-            <version>0.7.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.openai</groupId>
-            <artifactId>openai-java</artifactId>
-            <version>0.7.1</version>
-        </dependency>
+        <!-- RestTemplate and WebClient are already in spring-boot-starter-web -->
 
         <!-- Logging -->
         <dependency>
