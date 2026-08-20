@@ -33,6 +33,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    restart: unless-stopped
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/cars_app
       SPRING_DATASOURCE_USERNAME: ${DATABASE_USER:-postgres}
@@ -51,9 +52,10 @@ services:
       - cars_network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
 
   # React Frontend
   frontend:
