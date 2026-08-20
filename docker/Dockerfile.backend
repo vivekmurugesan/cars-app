@@ -6,13 +6,13 @@ FROM maven:3.9-eclipse-temurin-17 AS builder
 WORKDIR /app
 
 # Copy pom.xml
-COPY backend/pom.xml .
+COPY pom.xml .
 
 # Download dependencies (cacheable layer)
 RUN mvn dependency:resolve
 
 # Copy source code
-COPY backend/src ./src
+COPY src ./src
 
 # Build the application
 RUN mvn clean package -DskipTests
