@@ -7,7 +7,7 @@ services:
     container_name: cars_app_db
     environment:
       POSTGRES_USER: ${DATABASE_USER:-postgres}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-password}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:?Database password is required in .env file}
       POSTGRES_DB: cars_app
     ports:
       - "${DB_PORT:-5432}:5432"
