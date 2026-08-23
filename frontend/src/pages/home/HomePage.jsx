@@ -28,9 +28,9 @@ const HomePage = () => {
       <header className="bg-white shadow sticky top-0 z-50">
         <div className="container py-4">
           <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <span className="text-3xl">🏎️</span>
-              <h1 className="text-2xl font-bold text-gray-900">Cars App</h1>
+            <div className="flex items-center gap-3">
+              <span className="text-6xl">🏎️</span>
+              <h1 className="text-3xl font-bold text-gray-900">Cars App</h1>
             </div>
             <div className="flex gap-3">
               <Link to="/search" className="btn btn-secondary">

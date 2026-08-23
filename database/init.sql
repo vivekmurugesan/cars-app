@@ -318,3 +318,219 @@ VALUES
     ('Electric vehicles produce zero emissions!', 'easy', 'environment'),
     ('The first traffic light was installed in 1868 in London!', 'medium', 'history')
 ON CONFLICT DO NOTHING;
+
+-- Sample quizzes with questions
+INSERT INTO quizzes (title, description, difficulty, category, points_reward)
+VALUES
+    ('Supercar Legends', 'Test your knowledge about the world''s fastest cars', 'hard', 'speed', 50),
+    ('Car History 101', 'Learn about the evolution of automobiles', 'easy', 'history', 10),
+    ('Electric Vehicles Challenge', 'Everything about electric cars', 'medium', 'environment', 30)
+ON CONFLICT DO NOTHING;
+
+-- Get quiz IDs for inserting questions
+-- Quiz 1: Supercar Legends
+INSERT INTO quiz_questions (quiz_id, question, question_order)
+SELECT id, 'What is the top speed of the Bugatti Veyron Super Sport?', 1
+FROM quizzes WHERE title = 'Supercar Legends'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO quiz_questions (quiz_id, question, question_order)
+SELECT id, 'Which car is known as the ''fastest production car''?', 2
+FROM quizzes WHERE title = 'Supercar Legends'
+ON CONFLICT DO NOTHING;
+
+-- Quiz 2: Car History 101
+INSERT INTO quiz_questions (quiz_id, question, question_order)
+SELECT id, 'In which year was the first gasoline-powered automobile invented?', 1
+FROM quizzes WHERE title = 'Car History 101'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO quiz_questions (quiz_id, question, question_order)
+SELECT id, 'Who is credited with inventing the automobile?', 2
+FROM quizzes WHERE title = 'Car History 101'
+ON CONFLICT DO NOTHING;
+
+-- Quiz 3: Electric Vehicles
+INSERT INTO quiz_questions (quiz_id, question, question_order)
+SELECT id, 'What does EV stand for?', 1
+FROM quizzes WHERE title = 'Electric Vehicles Challenge'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO quiz_questions (quiz_id, question, question_order)
+SELECT id, 'Which company popularized electric vehicles?', 2
+FROM quizzes WHERE title = 'Electric Vehicles Challenge'
+ON CONFLICT DO NOTHING;
+
+-- Quiz options for Supercar Legends - Question 1
+INSERT INTO quiz_options (question_id, option_text, is_correct, option_order)
+SELECT q.id, '267 mph', false, 1
+FROM quiz_questions q
+JOIN quizzes quiz ON q.quiz_id = quiz.id
+WHERE quiz.title = 'Supercar Legends' AND q.question_order = 1
+ON CONFLICT DO NOTHING;
+
+INSERT INTO quiz_options (question_id, option_text, is_correct, option_order)
+SELECT q.id, '268 mph', true, 2
+FROM quiz_questions q
+JOIN quizzes quiz ON q.quiz_id = quiz.id
+WHERE quiz.title = 'Supercar Legends' AND q.question_order = 1
+ON CONFLICT DO NOTHING;
+
+INSERT INTO quiz_options (question_id, option_text, is_correct, option_order)
+SELECT q.id, '250 mph', false, 3
+FROM quiz_questions q
+JOIN quizzes quiz ON q.quiz_id = quiz.id
+WHERE quiz.title = 'Supercar Legends' AND q.question_order = 1
+ON CONFLICT DO NOTHING;
+
+INSERT INTO quiz_options (question_id, option_text, is_correct, option_order)
+SELECT q.id, '300 mph', false, 4
+FROM quiz_questions q
+JOIN quizzes quiz ON q.quiz_id = quiz.id
+WHERE quiz.title = 'Supercar Legends' AND q.question_order = 1
+ON CONFLICT DO NOTHING;
+
+-- Quiz options for Supercar Legends - Question 2
+INSERT INTO quiz_options (question_id, option_text, is_correct, option_order)
+SELECT q.id, 'Bugatti Bolide', true, 1
+FROM quiz_questions q
+JOIN quizzes quiz ON q.quiz_id = quiz.id
+WHERE quiz.title = 'Supercar Legends' AND q.question_order = 2
+ON CONFLICT DO NOTHING;
+
+INSERT INTO quiz_options (question_id, option_text, is_correct, option_order)
+SELECT q.id, 'Lamborghini Veneno', false, 2
+FROM quiz_questions q
+JOIN quizzes quiz ON q.quiz_id = quiz.id
+WHERE quiz.title = 'Supercar Legends' AND q.question_order = 2
+ON CONFLICT DO NOTHING;
+
+INSERT INTO quiz_options (question_id, option_text, is_correct, option_order)
+SELECT q.id, 'Ferrari LaFerrari', false, 3
+FROM quiz_questions q
+JOIN quizzes quiz ON q.quiz_id = quiz.id
+WHERE quiz.title = 'Supercar Legends' AND q.question_order = 2
+ON CONFLICT DO NOTHING;
+
+INSERT INTO quiz_options (question_id, option_text, is_correct, option_order)
+SELECT q.id, 'McLaren P1', false, 4
+FROM quiz_questions q
+JOIN quizzes quiz ON q.quiz_id = quiz.id
+WHERE quiz.title = 'Supercar Legends' AND q.question_order = 2
+ON CONFLICT DO NOTHING;
+
+-- Quiz options for Car History 101 - Question 1
+INSERT INTO quiz_options (question_id, option_text, is_correct, option_order)
+SELECT q.id, '1885', true, 1
+FROM quiz_questions q
+JOIN quizzes quiz ON q.quiz_id = quiz.id
+WHERE quiz.title = 'Car History 101' AND q.question_order = 1
+ON CONFLICT DO NOTHING;
+
+INSERT INTO quiz_options (question_id, option_text, is_correct, option_order)
+SELECT q.id, '1876', false, 2
+FROM quiz_questions q
+JOIN quizzes quiz ON q.quiz_id = quiz.id
+WHERE quiz.title = 'Car History 101' AND q.question_order = 1
+ON CONFLICT DO NOTHING;
+
+INSERT INTO quiz_options (question_id, option_text, is_correct, option_order)
+SELECT q.id, '1900', false, 3
+FROM quiz_questions q
+JOIN quizzes quiz ON q.quiz_id = quiz.id
+WHERE quiz.title = 'Car History 101' AND q.question_order = 1
+ON CONFLICT DO NOTHING;
+
+INSERT INTO quiz_options (question_id, option_text, is_correct, option_order)
+SELECT q.id, '1920', false, 4
+FROM quiz_questions q
+JOIN quizzes quiz ON q.quiz_id = quiz.id
+WHERE quiz.title = 'Car History 101' AND q.question_order = 1
+ON CONFLICT DO NOTHING;
+
+-- Quiz options for Car History 101 - Question 2
+INSERT INTO quiz_options (question_id, option_text, is_correct, option_order)
+SELECT q.id, 'Karl Benz', true, 1
+FROM quiz_questions q
+JOIN quizzes quiz ON q.quiz_id = quiz.id
+WHERE quiz.title = 'Car History 101' AND q.question_order = 2
+ON CONFLICT DO NOTHING;
+
+INSERT INTO quiz_options (question_id, option_text, is_correct, option_order)
+SELECT q.id, 'Henry Ford', false, 2
+FROM quiz_questions q
+JOIN quizzes quiz ON q.quiz_id = quiz.id
+WHERE quiz.title = 'Car History 101' AND q.question_order = 2
+ON CONFLICT DO NOTHING;
+
+INSERT INTO quiz_options (question_id, option_text, is_correct, option_order)
+SELECT q.id, 'Nicolaus Otto', false, 3
+FROM quiz_questions q
+JOIN quizzes quiz ON q.quiz_id = quiz.id
+WHERE quiz.title = 'Car History 101' AND q.question_order = 2
+ON CONFLICT DO NOTHING;
+
+INSERT INTO quiz_options (question_id, option_text, is_correct, option_order)
+SELECT q.id, 'Gottlieb Daimler', false, 4
+FROM quiz_questions q
+JOIN quizzes quiz ON q.quiz_id = quiz.id
+WHERE quiz.title = 'Car History 101' AND q.question_order = 2
+ON CONFLICT DO NOTHING;
+
+-- Quiz options for Electric Vehicles Challenge - Question 1
+INSERT INTO quiz_options (question_id, option_text, is_correct, option_order)
+SELECT q.id, 'Electric Vehicle', true, 1
+FROM quiz_questions q
+JOIN quizzes quiz ON q.quiz_id = quiz.id
+WHERE quiz.title = 'Electric Vehicles Challenge' AND q.question_order = 1
+ON CONFLICT DO NOTHING;
+
+INSERT INTO quiz_options (question_id, option_text, is_correct, option_order)
+SELECT q.id, 'Efficient Vehicle', false, 2
+FROM quiz_questions q
+JOIN quizzes quiz ON q.quiz_id = quiz.id
+WHERE quiz.title = 'Electric Vehicles Challenge' AND q.question_order = 1
+ON CONFLICT DO NOTHING;
+
+INSERT INTO quiz_options (question_id, option_text, is_correct, option_order)
+SELECT q.id, 'Electronic Vehicle', false, 3
+FROM quiz_questions q
+JOIN quizzes quiz ON q.quiz_id = quiz.id
+WHERE quiz.title = 'Electric Vehicles Challenge' AND q.question_order = 1
+ON CONFLICT DO NOTHING;
+
+INSERT INTO quiz_options (question_id, option_text, is_correct, option_order)
+SELECT q.id, 'Energy Vehicle', false, 4
+FROM quiz_questions q
+JOIN quizzes quiz ON q.quiz_id = quiz.id
+WHERE quiz.title = 'Electric Vehicles Challenge' AND q.question_order = 1
+ON CONFLICT DO NOTHING;
+
+-- Quiz options for Electric Vehicles Challenge - Question 2
+INSERT INTO quiz_options (question_id, option_text, is_correct, option_order)
+SELECT q.id, 'Tesla', true, 1
+FROM quiz_questions q
+JOIN quizzes quiz ON q.quiz_id = quiz.id
+WHERE quiz.title = 'Electric Vehicles Challenge' AND q.question_order = 2
+ON CONFLICT DO NOTHING;
+
+INSERT INTO quiz_options (question_id, option_text, is_correct, option_order)
+SELECT q.id, 'Nissan', false, 2
+FROM quiz_questions q
+JOIN quizzes quiz ON q.quiz_id = quiz.id
+WHERE quiz.title = 'Electric Vehicles Challenge' AND q.question_order = 2
+ON CONFLICT DO NOTHING;
+
+INSERT INTO quiz_options (question_id, option_text, is_correct, option_order)
+SELECT q.id, 'BMW', false, 3
+FROM quiz_questions q
+JOIN quizzes quiz ON q.quiz_id = quiz.id
+WHERE quiz.title = 'Electric Vehicles Challenge' AND q.question_order = 2
+ON CONFLICT DO NOTHING;
+
+INSERT INTO quiz_options (question_id, option_text, is_correct, option_order)
+SELECT q.id, 'Chevrolet', false, 4
+FROM quiz_questions q
+JOIN quizzes quiz ON q.quiz_id = quiz.id
+WHERE quiz.title = 'Electric Vehicles Challenge' AND q.question_order = 2
+ON CONFLICT DO NOTHING;
