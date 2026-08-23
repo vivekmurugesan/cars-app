@@ -16,16 +16,13 @@ const RegisterPage = () => {
   const [step, setStep] = useState('email');
   const [email, setEmail] = useState('');
   const [interests, setInterests] = useState([]);
+  const [buttonLoading, setButtonLoading] = useState(false);
   const navigate = useNavigate();
-  const { register, sendOtp, isLoading } = useAuthStore();
+  const { register, sendOtp } = useAuthStore();
 
   useEffect(() => {
     console.log('RegisterPage step changed to:', step);
   }, [step]);
-
-  useEffect(() => {
-    console.log('RegisterPage isLoading changed to:', isLoading, 'current step:', step);
-  }, [isLoading]);
 
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
@@ -34,7 +31,9 @@ const RegisterPage = () => {
       toast.error('Please enter your email');
       return;
     }
+    setButtonLoading(true);
     const success = await sendOtp(email);
+    setButtonLoading(false);
     console.log('sendOtp result:', success);
     if (success) {
       console.log('Setting step to interests');
@@ -60,7 +59,9 @@ const RegisterPage = () => {
       toast.error('Please select at least one interest');
       return;
     }
+    setButtonLoading(true);
     const success = await register(email, interests);
+    setButtonLoading(false);
     if (success) {
       toast.success('Registration successful!');
       navigate('/');
@@ -90,16 +91,16 @@ const RegisterPage = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@email.com"
                   className="input-field"
-                  disabled={isLoading}
+                  disabled={buttonLoading}
                 />
               </div>
 
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={buttonLoading}
                 className="btn btn-primary w-full"
               >
-                {isLoading ? 'Sending...' : 'Continue'}
+                {buttonLoading ? 'Sending...' : 'Continue'}
               </button>
             </form>
           ) : (
@@ -131,7 +132,7 @@ const RegisterPage = () => {
                 disabled={isLoading || interests.length === 0}
                 className="btn btn-primary w-full"
               >
-                {isLoading ? 'Registering...' : 'Complete Registration'}
+                {buttonLoading ? 'Registering...' : 'Complete Registration'}
               </button>
 
               <button

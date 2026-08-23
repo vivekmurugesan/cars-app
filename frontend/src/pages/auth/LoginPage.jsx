@@ -7,16 +7,14 @@ const LoginPage = () => {
   const [step, setStep] = useState('email'); // email or otp
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
+  const [buttonLoading, setButtonLoading] = useState(false);
   const navigate = useNavigate();
-  const { sendOtp, verifyOtp, isLoading } = useAuthStore();
+  const { sendOtp, verifyOtp } = useAuthStore();
 
   useEffect(() => {
     console.log('Step changed to:', step);
   }, [step]);
 
-  useEffect(() => {
-    console.log('isLoading changed to:', isLoading, 'current step:', step);
-  }, [isLoading]);
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
@@ -25,7 +23,9 @@ const LoginPage = () => {
       toast.error('Please enter your email');
       return;
     }
+    setButtonLoading(true);
     const success = await sendOtp(email);
+    setButtonLoading(false);
     console.log('sendOtp result:', success);
     if (success) {
       console.log('Setting step to otp');
@@ -43,7 +43,9 @@ const LoginPage = () => {
       toast.error('Please enter the OTP');
       return;
     }
+    setButtonLoading(true);
     const success = await verifyOtp(email, otp);
+    setButtonLoading(false);
     if (success) {
       toast.success('Login successful!');
       navigate('/');
@@ -73,16 +75,16 @@ const LoginPage = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@email.com"
                   className="input-field"
-                  disabled={isLoading}
+                  disabled={buttonLoading}
                 />
               </div>
 
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={buttonLoading}
                 className="btn btn-primary w-full"
               >
-                {isLoading ? 'Sending...' : 'Send OTP'}
+                {buttonLoading ? 'Sending...' : 'Send OTP'}
               </button>
             </form>
           ) : (
@@ -98,7 +100,7 @@ const LoginPage = () => {
                   placeholder="000000"
                   maxLength="6"
                   className="input-field text-center text-2xl tracking-widest"
-                  disabled={isLoading}
+                  disabled={buttonLoading}
                 />
                 <p className="text-sm text-gray-500 mt-2">
                   Check your email for the OTP code
@@ -107,10 +109,10 @@ const LoginPage = () => {
 
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={buttonLoading}
                 className="btn btn-primary w-full"
               >
-                {isLoading ? 'Verifying...' : 'Verify OTP'}
+                {buttonLoading ? 'Verifying...' : 'Verify OTP'}
               </button>
 
               <button
