@@ -67,7 +67,7 @@ public class CarService {
             .map(this::convertToDto);
     }
 
-    private CarDto convertToDto(Car car) {
+    public CarDto convertToDto(Car car) {
         CarDto dto = new CarDto();
         dto.setId(car.getId());
         dto.setBrandName(car.getBrand().getName());
