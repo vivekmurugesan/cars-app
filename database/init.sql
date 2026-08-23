@@ -218,6 +218,59 @@ CREATE TABLE trending_cars (
     UNIQUE(car_id)
 );
 
+-- Cached trivia from Gemini API
+CREATE TABLE cached_trivia (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    topic VARCHAR(255) NOT NULL,
+    fact TEXT NOT NULL,
+    image_search_terms VARCHAR(500),
+    video_search_terms VARCHAR(500),
+    difficulty VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Cached quiz questions from Gemini API
+CREATE TABLE cached_quizzes (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    topic VARCHAR(255) NOT NULL,
+    difficulty VARCHAR(50) NOT NULL,
+    question TEXT NOT NULL,
+    options TEXT NOT NULL,
+    correct_answer VARCHAR(500) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Cached car details from Gemini API
+CREATE TABLE cached_cars (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    car_name VARCHAR(255) NOT NULL UNIQUE,
+    brand VARCHAR(255) NOT NULL,
+    model VARCHAR(255) NOT NULL,
+    year INTEGER,
+    top_speed INTEGER,
+    horsepower INTEGER,
+    description TEXT,
+    historical_significance TEXT,
+    fun_fact TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Cached featured car from Gemini API
+CREATE TABLE cached_featured_cars (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    brand VARCHAR(255) NOT NULL,
+    model VARCHAR(255) NOT NULL,
+    category VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    interesting_fact TEXT,
+    why_featured TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Create indexes for performance
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_otps_email ON otps(email);
@@ -239,6 +292,11 @@ CREATE INDEX idx_user_quiz_progress_quiz_id ON user_quiz_progress(quiz_id);
 CREATE INDEX idx_user_bookmarks_user_id ON user_bookmarks(user_id);
 CREATE INDEX idx_user_badges_user_id ON user_badges(user_id);
 CREATE INDEX idx_user_points_user_id ON user_points(user_id);
+CREATE INDEX idx_cached_trivia_topic ON cached_trivia(topic);
+CREATE INDEX idx_cached_quizzes_topic ON cached_quizzes(topic);
+CREATE INDEX idx_cached_quizzes_difficulty ON cached_quizzes(difficulty);
+CREATE INDEX idx_cached_cars_car_name ON cached_cars(car_name);
+CREATE INDEX idx_cached_featured_cars_created ON cached_featured_cars(created_at);
 
 -- Sample data for testing
 INSERT INTO car_brands (name, country, founded_year, description, logo_url)
