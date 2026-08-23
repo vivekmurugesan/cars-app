@@ -2,11 +2,13 @@ package com.carsapp.controller;
 
 import com.carsapp.dto.CarDto;
 import com.carsapp.service.CarService;
+import com.carsapp.service.AIService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -15,6 +17,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CarController {
     private final CarService carService;
+    private final AIService aiService;
 
     @GetMapping
     public ResponseEntity<Page<CarDto>> getAllCars(
@@ -67,5 +70,20 @@ public class CarController {
     @GetMapping("/{carId}")
     public ResponseEntity<CarDto> getCarDetails(@PathVariable UUID carId) {
         return ResponseEntity.ok(carService.getCarDetails(carId));
+    }
+
+    @GetMapping("/featured/car")
+    public ResponseEntity<Map<String, Object>> getFeaturedCar() {
+        return ResponseEntity.ok(aiService.getFeaturedCar());
+    }
+
+    @GetMapping("/ai/search")
+    public ResponseEntity<?> searchCarsWithAI(@RequestParam String query) {
+        return ResponseEntity.ok(aiService.searchCars(query));
+    }
+
+    @GetMapping("/ai/details")
+    public ResponseEntity<Map<String, Object>> getCarDetailsWithAI(@RequestParam String carName) {
+        return ResponseEntity.ok(aiService.getCarDetails(carName));
     }
 }

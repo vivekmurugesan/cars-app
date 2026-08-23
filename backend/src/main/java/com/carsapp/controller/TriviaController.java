@@ -2,6 +2,7 @@ package com.carsapp.controller;
 
 import com.carsapp.dto.TriviaFactDto;
 import com.carsapp.service.TriviaService;
+import com.carsapp.service.AIService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TriviaController {
     private final TriviaService triviaService;
+    private final AIService aiService;
 
     @GetMapping
     public ResponseEntity<Page<TriviaFactDto>> getAllTrivia(
@@ -66,5 +68,10 @@ public class TriviaController {
             return ResponseEntity.badRequest()
                 .body(Map.of("error", e.getMessage()));
         }
+    }
+
+    @GetMapping("/ai/{topic}")
+    public ResponseEntity<Map<String, Object>> generateTriviaWithMedia(@PathVariable String topic) {
+        return ResponseEntity.ok(aiService.generateTriviaWithMedia(topic));
     }
 }
