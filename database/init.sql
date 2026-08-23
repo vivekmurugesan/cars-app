@@ -18,14 +18,8 @@ CREATE TYPE car_category AS ENUM (
     'HYPERCARS'
 );
 
-CREATE TYPE user_interest AS ENUM (
-    'LEARN_ABOUT_CARS',
-    'DIFFERENT_BRANDS',
-    'CAR_CONCEPTS',
-    'AUTOMOBILE_HISTORY',
-    'LATEST_RELEASES',
-    'PERFORMANCE_SPECS'
-);
+-- Note: user_interest ENUM type removed to allow string values from JPA
+-- The backend sends strings like 'LEARN_ABOUT_CARS' which are stored as VARCHAR
 
 -- Users table
 CREATE TABLE users (
@@ -50,7 +44,7 @@ CREATE TABLE otps (
 CREATE TABLE user_interests (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    interest user_interest NOT NULL,
+    interest VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(user_id, interest)
 );
