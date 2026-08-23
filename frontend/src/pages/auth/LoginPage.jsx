@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import useAuthStore from '../../store/authStore';
@@ -10,14 +10,21 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const { sendOtp, verifyOtp, isLoading } = useAuthStore();
 
+  useEffect(() => {
+    console.log('Step changed to:', step);
+  }, [step]);
+
   const handleSendOtp = async (e) => {
     e.preventDefault();
+    console.log('handleSendOtp called, current step:', step);
     if (!email.trim()) {
       toast.error('Please enter your email');
       return;
     }
     const success = await sendOtp(email);
+    console.log('sendOtp result:', success);
     if (success) {
+      console.log('Setting step to otp');
       toast.success('OTP sent to your email!');
       setStep('otp');
     } else {

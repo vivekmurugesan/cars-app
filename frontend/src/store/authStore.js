@@ -15,11 +15,13 @@ const useAuthStore = create(
       sendOtp: async (email) => {
         set({ isLoading: true, error: null });
         try {
-          await api.post('/auth/send-otp', { email });
+          const response = await api.post('/auth/send-otp', { email });
+          console.log('sendOtp response:', response.data);
           set({ isLoading: false });
           return true;
         } catch (error) {
-          const message = error.response?.data?.message || 'Failed to send OTP';
+          console.error('sendOtp error:', error);
+          const message = error.response?.data?.error || 'Failed to send OTP';
           set({ isLoading: false, error: message });
           return false;
         }
