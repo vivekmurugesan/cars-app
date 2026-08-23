@@ -11,9 +11,13 @@ const useAuthStore = create(
       isLoading: false,
       error: null,
       authStep: 'email',
+      tempEmail: null,
 
       // Set auth step
       setAuthStep: (step) => set({ authStep: step }),
+
+      // Set temp email for registration/login flow
+      setTempEmail: (email) => set({ tempEmail: email }),
 
       // Send OTP to email
       sendOtp: async (email) => {

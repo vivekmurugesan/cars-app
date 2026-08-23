@@ -14,17 +14,17 @@ const INTERESTS = [
 ];
 
 const RegisterPage = () => {
-  const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [interests, setInterests] = useState([]);
   const [buttonLoading, setButtonLoading] = useState(false);
   const navigate = useNavigate();
-  const { register, sendOtp, authStep, setAuthStep } = useAuthStore();
+  const { register, sendOtp, authStep, setAuthStep, tempEmail, setTempEmail } = useAuthStore();
 
   useEffect(() => {
-    // Reset auth step when component mounts to ensure fresh registration flow
+    // Reset auth flow when component mounts to ensure fresh registration
     setAuthStep('email');
-  }, [setAuthStep]);
+    setTempEmail(null);
+  }, [setAuthStep, setTempEmail]);
 
   useEffect(() => {
     console.log('RegisterPage authStep changed to:', authStep);
@@ -32,12 +32,12 @@ const RegisterPage = () => {
 
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
-    if (!email.trim()) {
+    if (!tempEmail || !tempEmail.trim()) {
       toast.error('Please enter your email');
       return;
     }
     setButtonLoading(true);
-    const success = await sendOtp(email);
+    const success = await sendOtp(tempEmail);
     setButtonLoading(false);
     if (success) {
       toast.success('OTP sent to your email!');
@@ -53,11 +53,11 @@ const RegisterPage = () => {
       toast.error('Please enter the OTP');
       return;
     }
-    console.log('handleVerifyOtp: email=', email, 'otp=', otp);
+    console.log('handleVerifyOtp: email=', tempEmail, 'otp=', otp);
     setButtonLoading(true);
     try {
       // Verify OTP with backend
-      await api.post('/auth/verify-otp', { email, otp });
+      await api.post('/auth/verify-otp', { email: tempEmail, otp });
       toast.success('OTP verified!');
       setButtonLoading(false);
       setAuthStep('interests');
@@ -78,13 +78,13 @@ const RegisterPage = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    console.log('handleRegister: email=', email, 'interests=', interests);
+    console.log('handleRegister: email=', tempEmail, 'interests=', interests);
     if (interests.length === 0) {
       toast.error('Please select at least one interest');
       return;
     }
     setButtonLoading(true);
-    const success = await register(email, interests);
+    const success = await register(tempEmail, interests);
     setButtonLoading(false);
     if (success) {
       toast.success('Registration successful!');
@@ -111,8 +111,8 @@ const RegisterPage = () => {
                 </label>
                 <input
                   type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={tempEmail || ''}
+                  onChange={(e) => setTempEmail(e.target.value)}
                   placeholder="your@email.com"
                   className="input-field"
                   disabled={buttonLoading}

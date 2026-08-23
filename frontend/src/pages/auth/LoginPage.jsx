@@ -4,11 +4,16 @@ import toast from 'react-hot-toast';
 import useAuthStore from '../../store/authStore';
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [buttonLoading, setButtonLoading] = useState(false);
   const navigate = useNavigate();
-  const { sendOtp, verifyOtp, authStep, setAuthStep } = useAuthStore();
+  const { sendOtp, verifyOtp, authStep, setAuthStep, tempEmail, setTempEmail } = useAuthStore();
+
+  useEffect(() => {
+    // Reset auth flow when component mounts
+    setAuthStep('email');
+    setTempEmail(null);
+  }, [setAuthStep, setTempEmail]);
 
   useEffect(() => {
     console.log('Auth step changed to:', authStep);
@@ -17,12 +22,12 @@ const LoginPage = () => {
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
-    if (!email.trim()) {
+    if (!tempEmail || !tempEmail.trim()) {
       toast.error('Please enter your email');
       return;
     }
     setButtonLoading(true);
-    const success = await sendOtp(email);
+    const success = await sendOtp(tempEmail);
     setButtonLoading(false);
     if (success) {
       toast.success('OTP sent to your email!');
@@ -34,13 +39,13 @@ const LoginPage = () => {
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    console.log('handleVerifyOtp: email=', email, 'otp=', otp);
+    console.log('handleVerifyOtp: email=', tempEmail, 'otp=', otp);
     if (!otp.trim()) {
       toast.error('Please enter the OTP');
       return;
     }
     setButtonLoading(true);
-    const success = await verifyOtp(email, otp);
+    const success = await verifyOtp(tempEmail, otp);
     setButtonLoading(false);
     if (success) {
       toast.success('Login successful!');
@@ -67,8 +72,8 @@ const LoginPage = () => {
                 </label>
                 <input
                   type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={tempEmail || ''}
+                  onChange={(e) => setTempEmail(e.target.value)}
                   placeholder="your@email.com"
                   className="input-field"
                   disabled={buttonLoading}
