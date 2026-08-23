@@ -2,6 +2,7 @@ package com.carsapp.controller;
 
 import com.carsapp.dto.QuizDto;
 import com.carsapp.service.QuizService;
+import com.carsapp.service.AIService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class QuizController {
     private final QuizService quizService;
+    private final AIService aiService;
 
     @GetMapping
     public ResponseEntity<Page<QuizDto>> getAllQuizzes(
@@ -70,5 +72,12 @@ public class QuizController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(quizService.getUserQuizProgress(userId, page, size));
+    }
+
+    @GetMapping("/ai/generate")
+    public ResponseEntity<Map<String, Object>> generateQuizWithAI(
+            @RequestParam String topic,
+            @RequestParam(defaultValue = "medium") String difficulty) {
+        return ResponseEntity.ok(aiService.generateQuizQuestion(topic, difficulty));
     }
 }

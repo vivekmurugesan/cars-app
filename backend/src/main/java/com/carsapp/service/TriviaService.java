@@ -3,9 +3,12 @@ package com.carsapp.service;
 import com.carsapp.dto.TriviaFactDto;
 import com.carsapp.entity.DailyTrivia;
 import com.carsapp.entity.TriviaFact;
+import com.carsapp.entity.CachedTrivia;
 import com.carsapp.repository.DailyTriviaRepository;
 import com.carsapp.repository.TriviaFactRepository;
+import com.carsapp.repository.CachedTriviaRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,12 +18,16 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.Random;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TriviaService {
     private final TriviaFactRepository triviaFactRepository;
     private final DailyTriviaRepository dailyTriviaRepository;
+    private final AIService aiService;
+    private final CachedTriviaRepository cachedTriviaRepository;
 
     public Page<TriviaFactDto> getAllTrivia(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -75,6 +82,23 @@ public class TriviaService {
             dailyTrivia.setTriviaDate(today);
             dailyTriviaRepository.save(dailyTrivia);
         }
+    }
+
+    public TriviaFactDto generateTriviaContent(String topic) {
+        Map<String, Object> result = aiService.generateTriviaWithMedia(topic);
+        if (result != null) {
+            String fact = (String) result.get("fact");
+            String difficulty = (String) result.getOrDefault("difficulty", "medium");
+
+            TriviaFact trivia = new TriviaFact();
+            trivia.setFact(fact);
+            trivia.setDifficulty(difficulty);
+            trivia.setCategory(topic);
+
+            TriviaFact saved = triviaFactRepository.save(trivia);
+            return convertToDto(saved);
+        }
+        return null;
     }
 
     private TriviaFactDto convertToDto(TriviaFact trivia) {

@@ -8,22 +8,26 @@ import com.carsapp.repository.CarFactRepository;
 import com.carsapp.repository.CarImageRepository;
 import com.carsapp.repository.CarRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CarService {
     private final CarRepository carRepository;
     private final CarImageRepository carImageRepository;
     private final CarFactRepository carFactRepository;
+    private final AIService aiService;
 
     public Page<CarDto> searchCars(String query, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -65,6 +69,14 @@ public class CarService {
         Pageable pageable = PageRequest.of(page, size);
         return carRepository.findAll(pageable)
             .map(this::convertToDto);
+    }
+
+    public List<Map<String, Object>> searchCarsWithAI(String query) {
+        return aiService.searchCars(query);
+    }
+
+    public Map<String, Object> getCarDetailsWithAI(String carName) {
+        return aiService.getCarDetails(carName);
     }
 
     public CarDto convertToDto(Car car) {
