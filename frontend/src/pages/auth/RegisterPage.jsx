@@ -38,7 +38,10 @@ const RegisterPage = () => {
     if (success) {
       console.log('Setting step to interests');
       toast.success('OTP sent to your email!');
-      setStep('interests');
+      setTimeout(() => {
+        console.log('setStep called in setTimeout');
+        setStep('interests');
+      }, 0);
       console.log('After setStep, step should be interests');
     } else {
       toast.error('Failed to send OTP');

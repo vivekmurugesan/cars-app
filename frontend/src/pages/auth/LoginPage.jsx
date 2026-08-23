@@ -30,7 +30,10 @@ const LoginPage = () => {
     if (success) {
       console.log('Setting step to otp');
       toast.success('OTP sent to your email!');
-      setStep('otp');
+      setTimeout(() => {
+        console.log('setStep called in setTimeout');
+        setStep('otp');
+      }, 0);
       console.log('After setStep, step should be otp');
     } else {
       toast.error('Failed to send OTP');
