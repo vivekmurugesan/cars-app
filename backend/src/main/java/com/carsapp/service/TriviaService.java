@@ -12,7 +12,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -43,10 +45,21 @@ public class TriviaService {
 
     public TriviaFactDto getDailyTrivia() {
         LocalDate today = LocalDate.now();
-        DailyTrivia dailyTrivia = dailyTriviaRepository.findByTriviaDate(today)
-            .orElseThrow(() -> new IllegalArgumentException("No trivia for today"));
 
-        return convertToDto(dailyTrivia.getTrivia());
+        // Try to get the daily trivia for today
+        var existingDaily = dailyTriviaRepository.findByTriviaDate(today);
+        if (existingDaily.isPresent()) {
+            return convertToDto(existingDaily.get().getTrivia());
+        }
+
+        // If no daily trivia is set, return a random trivia
+        List<TriviaFact> allTrivia = triviaFactRepository.findAll();
+        if (allTrivia.isEmpty()) {
+            throw new IllegalArgumentException("No trivia facts available");
+        }
+
+        TriviaFact randomTrivia = allTrivia.get(new Random().nextInt(allTrivia.size()));
+        return convertToDto(randomTrivia);
     }
 
     public void setDailyTrivia(UUID triviaId) {
