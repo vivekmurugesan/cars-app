@@ -31,12 +31,19 @@ CREATE TYPE user_interest AS ENUM (
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     email VARCHAR(255) NOT NULL UNIQUE,
-    otp VARCHAR(6),
-    otp_expiry TIMESTAMP,
-    otp_verified BOOLEAN DEFAULT FALSE,
+    verified BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    last_login TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- OTPs table
+CREATE TABLE otps (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    email VARCHAR(255) NOT NULL,
+    code VARCHAR(6) NOT NULL,
+    verified BOOLEAN DEFAULT FALSE,
+    expires_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- User interests table
@@ -219,6 +226,8 @@ CREATE TABLE trending_cars (
 
 -- Create indexes for performance
 CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_otps_email ON otps(email);
+CREATE INDEX idx_otps_expires_at ON otps(expires_at);
 CREATE INDEX idx_user_interests_user_id ON user_interests(user_id);
 CREATE INDEX idx_cars_brand_id ON cars(brand_id);
 CREATE INDEX idx_cars_category ON cars(category);
