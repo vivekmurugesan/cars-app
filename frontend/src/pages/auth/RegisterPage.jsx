@@ -24,10 +24,7 @@ const RegisterPage = () => {
   useEffect(() => {
     // Reset auth step when component mounts to ensure fresh registration flow
     setAuthStep('email');
-    setEmail('');
-    setOtp('');
-    setInterests([]);
-  }, []);
+  }, [setAuthStep]);
 
   useEffect(() => {
     console.log('RegisterPage authStep changed to:', authStep);
