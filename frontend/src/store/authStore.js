@@ -10,6 +10,10 @@ const useAuthStore = create(
       isAuthenticated: false,
       isLoading: false,
       error: null,
+      authStep: 'email',
+
+      // Set auth step
+      setAuthStep: (step) => set({ authStep: step }),
 
       // Send OTP to email
       sendOtp: async (email) => {

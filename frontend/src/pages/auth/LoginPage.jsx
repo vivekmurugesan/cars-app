@@ -4,21 +4,19 @@ import toast from 'react-hot-toast';
 import useAuthStore from '../../store/authStore';
 
 const LoginPage = () => {
-  const [step, setStep] = useState('email'); // email or otp
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [buttonLoading, setButtonLoading] = useState(false);
   const navigate = useNavigate();
-  const { sendOtp, verifyOtp } = useAuthStore();
+  const { sendOtp, verifyOtp, authStep, setAuthStep } = useAuthStore();
 
   useEffect(() => {
-    console.log('Step changed to:', step);
-  }, [step]);
+    console.log('Auth step changed to:', authStep);
+  }, [authStep]);
 
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
-    console.log('handleSendOtp called, current step:', step);
     if (!email.trim()) {
       toast.error('Please enter your email');
       return;
@@ -26,15 +24,9 @@ const LoginPage = () => {
     setButtonLoading(true);
     const success = await sendOtp(email);
     setButtonLoading(false);
-    console.log('sendOtp result:', success);
     if (success) {
-      console.log('Setting step to otp');
       toast.success('OTP sent to your email!');
-      setTimeout(() => {
-        console.log('setStep called in setTimeout');
-        setStep('otp');
-      }, 0);
-      console.log('After setStep, step should be otp');
+      setAuthStep('otp');
     } else {
       toast.error('Failed to send OTP');
     }
@@ -66,7 +58,7 @@ const LoginPage = () => {
             <p className="text-gray-600">Learn about your favorite cars</p>
           </div>
 
-          {step === 'email' ? (
+          {authStep === 'email' ? (
             <form onSubmit={handleSendOtp} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -120,7 +112,7 @@ const LoginPage = () => {
 
               <button
                 type="button"
-                onClick={() => setStep('email')}
+                onClick={() => setAuthStep('email')}
                 className="btn btn-secondary w-full"
               >
                 Back

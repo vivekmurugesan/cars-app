@@ -13,20 +13,18 @@ const INTERESTS = [
 ];
 
 const RegisterPage = () => {
-  const [step, setStep] = useState('email');
   const [email, setEmail] = useState('');
   const [interests, setInterests] = useState([]);
   const [buttonLoading, setButtonLoading] = useState(false);
   const navigate = useNavigate();
-  const { register, sendOtp } = useAuthStore();
+  const { register, sendOtp, authStep, setAuthStep } = useAuthStore();
 
   useEffect(() => {
-    console.log('RegisterPage step changed to:', step);
-  }, [step]);
+    console.log('RegisterPage authStep changed to:', authStep);
+  }, [authStep]);
 
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
-    console.log('handleEmailSubmit called, current step:', step);
     if (!email.trim()) {
       toast.error('Please enter your email');
       return;
@@ -34,15 +32,9 @@ const RegisterPage = () => {
     setButtonLoading(true);
     const success = await sendOtp(email);
     setButtonLoading(false);
-    console.log('sendOtp result:', success);
     if (success) {
-      console.log('Setting step to interests');
       toast.success('OTP sent to your email!');
-      setTimeout(() => {
-        console.log('setStep called in setTimeout');
-        setStep('interests');
-      }, 0);
-      console.log('After setStep, step should be interests');
+      setAuthStep('interests');
     } else {
       toast.error('Failed to send OTP');
     }
@@ -82,7 +74,7 @@ const RegisterPage = () => {
             <p className="text-gray-600">Join us to explore amazing cars!</p>
           </div>
 
-          {step === 'email' ? (
+          {authStep === 'email' ? (
             <form onSubmit={handleEmailSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -140,7 +132,7 @@ const RegisterPage = () => {
 
               <button
                 type="button"
-                onClick={() => setStep('email')}
+                onClick={() => setAuthStep('email')}
                 className="btn btn-secondary w-full"
               >
                 Back
