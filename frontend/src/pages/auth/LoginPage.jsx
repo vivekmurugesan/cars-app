@@ -10,10 +10,9 @@ const LoginPage = () => {
   const { sendOtp, verifyOtp, authStep, setAuthStep, tempEmail, setTempEmail } = useAuthStore();
 
   useEffect(() => {
-    // Reset auth flow when component mounts
+    // Reset auth step when component mounts
     setAuthStep('email');
-    setTempEmail(null);
-  }, [setAuthStep, setTempEmail]);
+  }, []);
 
   useEffect(() => {
     console.log('Auth step changed to:', authStep);
@@ -39,16 +38,22 @@ const LoginPage = () => {
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    console.log('handleVerifyOtp: email=', tempEmail, 'otp=', otp);
     if (!otp.trim()) {
       toast.error('Please enter the OTP');
       return;
     }
+    if (!tempEmail) {
+      toast.error('Email not found. Please start over.');
+      setAuthStep('email');
+      return;
+    }
+    console.log('handleVerifyOtp: email=', tempEmail, 'otp=', otp);
     setButtonLoading(true);
     const success = await verifyOtp(tempEmail, otp);
     setButtonLoading(false);
     if (success) {
       toast.success('Login successful!');
+      setTempEmail(null); // Clear email after successful login
       navigate('/');
     } else {
       toast.error('Invalid OTP');

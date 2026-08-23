@@ -21,10 +21,9 @@ const RegisterPage = () => {
   const { register, sendOtp, authStep, setAuthStep, tempEmail, setTempEmail } = useAuthStore();
 
   useEffect(() => {
-    // Reset auth flow when component mounts to ensure fresh registration
+    // Reset auth step when component mounts to ensure fresh registration flow
     setAuthStep('email');
-    setTempEmail(null);
-  }, [setAuthStep, setTempEmail]);
+  }, []);
 
   useEffect(() => {
     console.log('RegisterPage authStep changed to:', authStep);
@@ -51,6 +50,11 @@ const RegisterPage = () => {
     e.preventDefault();
     if (!otp.trim()) {
       toast.error('Please enter the OTP');
+      return;
+    }
+    if (!tempEmail) {
+      toast.error('Email not found. Please start over.');
+      setAuthStep('email');
       return;
     }
     console.log('handleVerifyOtp: email=', tempEmail, 'otp=', otp);
@@ -88,6 +92,7 @@ const RegisterPage = () => {
     setButtonLoading(false);
     if (success) {
       toast.success('Registration successful!');
+      setTempEmail(null); // Clear email after successful registration
       navigate('/');
     } else {
       toast.error('Registration failed');
