@@ -129,7 +129,7 @@ const RegisterPage = () => {
 
               <button
                 type="submit"
-                disabled={isLoading || interests.length === 0}
+                disabled={buttonLoading || interests.length === 0}
                 className="btn btn-primary w-full"
               >
                 {buttonLoading ? 'Registering...' : 'Complete Registration'}
