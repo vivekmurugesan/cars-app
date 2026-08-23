@@ -34,6 +34,7 @@ const LoginPage = () => {
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
+    console.log('handleVerifyOtp: email=', email, 'otp=', otp);
     if (!otp.trim()) {
       toast.error('Please enter the OTP');
       return;

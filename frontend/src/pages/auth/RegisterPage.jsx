@@ -50,6 +50,7 @@ const RegisterPage = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    console.log('handleRegister: email=', email, 'interests=', interests);
     if (interests.length === 0) {
       toast.error('Please select at least one interest');
       return;

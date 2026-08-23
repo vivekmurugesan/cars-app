@@ -33,6 +33,7 @@ const useAuthStore = create(
 
       // Verify OTP and login
       verifyOtp: async (email, otp) => {
+        console.log('verifyOtp called with email:', email, 'otp:', otp);
         set({ isLoading: true, error: null });
         try {
           const response = await api.post('/auth/verify-otp', { email, otp });
