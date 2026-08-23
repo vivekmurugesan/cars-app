@@ -1,9 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import useCarStore from '../../store/carStore';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
+import CarCard from '../../components/common/CarCard';
+import Pagination from '../../components/common/Pagination';
 
 const SearchPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [category, setCategory] = useState('');
+  const [hasSearched, setHasSearched] = useState(false);
+
+  const { cars, isLoading, totalPages, currentPage } = useCarStore();
+  const searchCars = useCarStore((state) => state.searchCars);
+  const getCarsByCategory = useCarStore((state) => state.getCarsByCategory);
+  const getAllCars = useCarStore((state) => state.getAllCars);
 
   const categories = [
     'SUPERCAR',
@@ -14,7 +24,33 @@ const SearchPage = () => {
     'SUV',
     'CLASSIC_CAR',
     'CONCEPT_CAR',
+    'HYPERCARS',
   ];
+
+  const handleSearch = async () => {
+    setHasSearched(true);
+    if (searchQuery.trim()) {
+      await searchCars(searchQuery);
+    } else if (category) {
+      await getCarsByCategory(category);
+    } else {
+      await getAllCars();
+    }
+  };
+
+  const handlePageChange = (page) => {
+    if (searchQuery.trim()) {
+      searchCars(searchQuery, page);
+    } else if (category) {
+      getCarsByCategory(category, page);
+    } else {
+      getAllCars(page);
+    }
+  };
+
+  useEffect(() => {
+    getAllCars();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -27,7 +63,7 @@ const SearchPage = () => {
 
         {/* Search Filters */}
         <div className="card p-6 mb-8">
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Search by make or model
@@ -36,7 +72,8 @@ const SearchPage = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="e.g., Ferrari, Tesla"
+                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                placeholder="e.g., Ferrari, Lamborghini"
                 className="input-field"
               />
             </div>
@@ -59,16 +96,61 @@ const SearchPage = () => {
               </select>
             </div>
 
-            <button className="btn btn-primary w-full">
-              Search
-            </button>
+            <div className="flex items-end">
+              <button
+                onClick={handleSearch}
+                className="btn btn-primary w-full"
+              >
+                Search
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Results */}
-        <div className="text-center py-12">
-          <p className="text-gray-600">Start searching to discover cars...</p>
-        </div>
+        {isLoading ? (
+          <LoadingSpinner />
+        ) : cars.length > 0 ? (
+          <>
+            <div className="mb-4 text-gray-600">
+              Found {cars.length} cars
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+              {cars.map((car) => (
+                <CarCard key={car.id} car={car} />
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            )}
+          </>
+        ) : hasSearched ? (
+          <div className="card p-12 text-center">
+            <p className="text-gray-600 text-lg">No cars found matching your search</p>
+            <button
+              onClick={() => {
+                setSearchQuery('');
+                setCategory('');
+                setHasSearched(false);
+                getAllCars();
+              }}
+              className="btn btn-secondary mt-4"
+            >
+              Clear Search
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {cars.map((car) => (
+              <CarCard key={car.id} car={car} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
