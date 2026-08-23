@@ -64,6 +64,7 @@ services:
     environment:
       REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost:8080/api}
       REACT_APP_ENV: ${REACT_APP_ENV:-development}
+      WATCHPACK_POLLING: "true"
     ports:
       - "${FRONTEND_PORT:-3000}:3000"
     volumes:
@@ -74,8 +75,6 @@ services:
       - cars_network
     depends_on:
       - backend
-    environment:
-      WATCHPACK_POLLING: "true"
 
   # Optional: pgAdmin for database management
   pgadmin:
