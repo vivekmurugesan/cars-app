@@ -35,13 +35,15 @@ public class AIService {
 
     public Map<String, Object> generateTrivia(String topic) {
         return cachedTriviaRepository.findByTopic(topic)
-            .map(trivia -> Map.of(
-                "fact", trivia.getFact(),
-                "topic", trivia.getTopic(),
-                "difficulty", trivia.getDifficulty(),
-                "imageSearchTerms", trivia.getImageSearchTerms(),
-                "videoSearchTerms", trivia.getVideoSearchTerms()
-            ))
+            .map(trivia -> {
+                Map<String, Object> result = new java.util.HashMap<>();
+                result.put("fact", trivia.getFact());
+                result.put("topic", trivia.getTopic());
+                result.put("difficulty", trivia.getDifficulty());
+                result.put("imageSearchTerms", trivia.getImageSearchTerms());
+                result.put("videoSearchTerms", trivia.getVideoSearchTerms());
+                return result;
+            })
             .orElseGet(() -> {
                 String fact = geminiAIService.generateTrivia(topic);
                 if (fact != null) {
@@ -51,11 +53,11 @@ public class AIService {
                     cached.setDifficulty("medium");
                     cachedTriviaRepository.save(cached);
 
-                    return Map.of(
-                        "fact", fact,
-                        "topic", topic,
-                        "difficulty", "medium"
-                    );
+                    Map<String, Object> result = new java.util.HashMap<>();
+                    result.put("fact", fact);
+                    result.put("topic", topic);
+                    result.put("difficulty", "medium");
+                    return result;
                 }
                 return null;
             });
@@ -63,13 +65,15 @@ public class AIService {
 
     public Map<String, Object> generateTriviaWithMedia(String topic) {
         return cachedTriviaRepository.findByTopic(topic)
-            .map(trivia -> Map.of(
-                "fact", trivia.getFact(),
-                "topic", trivia.getTopic(),
-                "difficulty", trivia.getDifficulty(),
-                "imageSearchTerms", trivia.getImageSearchTerms(),
-                "videoSearchTerms", trivia.getVideoSearchTerms()
-            ))
+            .map(trivia -> {
+                Map<String, Object> result = new java.util.HashMap<>();
+                result.put("fact", trivia.getFact());
+                result.put("topic", trivia.getTopic());
+                result.put("difficulty", trivia.getDifficulty());
+                result.put("imageSearchTerms", trivia.getImageSearchTerms());
+                result.put("videoSearchTerms", trivia.getVideoSearchTerms());
+                return result;
+            })
             .orElseGet(() -> {
                 Map<String, Object> result = geminiAIService.generateTriviaWithMedia(topic);
                 if (result != null) {
@@ -125,16 +129,18 @@ public class AIService {
 
     public Map<String, Object> getCarDetails(String carName) {
         return cachedCarRepository.findByCarName(carName)
-            .map(car -> Map.of(
-                "brand", car.getBrand(),
-                "model", car.getModel(),
-                "year", car.getYear(),
-                "topSpeed", car.getTopSpeed(),
-                "horsepower", car.getHorsepower(),
-                "description", car.getDescription(),
-                "historicalSignificance", car.getHistoricalSignificance(),
-                "funFact", car.getFunFact()
-            ))
+            .map(car -> {
+                Map<String, Object> result = new java.util.HashMap<>();
+                result.put("brand", car.getBrand());
+                result.put("model", car.getModel());
+                result.put("year", car.getYear());
+                result.put("topSpeed", car.getTopSpeed());
+                result.put("horsepower", car.getHorsepower());
+                result.put("description", car.getDescription());
+                result.put("historicalSignificance", car.getHistoricalSignificance());
+                result.put("funFact", car.getFunFact());
+                return result;
+            })
             .orElseGet(() -> {
                 Map<String, Object> result = geminiAIService.getCarDetails(carName);
                 if (result != null) {
@@ -174,14 +180,14 @@ public class AIService {
 
         if (!cached.isEmpty()) {
             CachedFeaturedCar featured = cached.getContent().get(0);
-            return Map.of(
-                "brand", featured.getBrand(),
-                "model", featured.getModel(),
-                "category", featured.getCategory(),
-                "description", featured.getDescription(),
-                "interestingFact", featured.getInterestingFact(),
-                "whyFeatured", featured.getWhyFeatured()
-            );
+            Map<String, Object> result = new java.util.HashMap<>();
+            result.put("brand", featured.getBrand());
+            result.put("model", featured.getModel());
+            result.put("category", featured.getCategory());
+            result.put("description", featured.getDescription());
+            result.put("interestingFact", featured.getInterestingFact());
+            result.put("whyFeatured", featured.getWhyFeatured());
+            return result;
         }
 
         Map<String, Object> result = geminiAIService.generateFeaturedCar();
