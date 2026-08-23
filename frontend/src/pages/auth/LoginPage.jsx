@@ -14,6 +14,10 @@ const LoginPage = () => {
     console.log('Step changed to:', step);
   }, [step]);
 
+  useEffect(() => {
+    console.log('isLoading changed to:', isLoading, 'current step:', step);
+  }, [isLoading]);
+
   const handleSendOtp = async (e) => {
     e.preventDefault();
     console.log('handleSendOtp called, current step:', step);
@@ -27,6 +31,7 @@ const LoginPage = () => {
       console.log('Setting step to otp');
       toast.success('OTP sent to your email!');
       setStep('otp');
+      console.log('After setStep, step should be otp');
     } else {
       toast.error('Failed to send OTP');
     }
