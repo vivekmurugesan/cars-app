@@ -1,225 +1,231 @@
-# Cars App - Kids Learning Platform
+# 🏎️ Cars App - Kids Learning Platform
 
-A vibrant, interactive application designed for 10-year-old car enthusiasts to learn about automobiles through gamified content, engaging profiles, and personalized recommendations.
+A full-stack web application for kids aged ~10 to learn about cars and automobiles through interactive browsing, quizzes, and trivia facts.
 
-## Project Overview
+## 📋 Project Overview
 
-This full-stack application combines:
-- **Frontend**: React SPA with Tailwind CSS for kid-friendly UI
-- **Backend**: Java Springboot RESTful API
-- **Database**: PostgreSQL for data persistence
-- **AI Integration**: Gemini/OpenAI API for dynamic content generation
-- **Deployment**: Docker & docker-compose for easy setup
+**Cars App** is a modern, kid-friendly platform that teaches children about cars and vehicles through:
+- **Car Catalog**: Browse and search cars by brand, category, year, and performance specs
+- **Personal Garage**: Save favorite cars to a collection
+- **Quizzes**: Interactive quizzes about cars with immediate feedback and scoring
+- **Trivia Facts**: Daily facts and educational content about automobiles
+- **OTP Authentication**: Secure email-based login without passwords
 
-## Features
+### Tech Stack
 
-### Core Features
-- **OTP-based Authentication**: Simple email login with one-time passwords
-- **Personalized Feed**: Car of the Day, daily trivia, interest-based recommendations
-- **Search & Discovery**: Filter cars by make, model, era, or category
-- **Personal Garage**: Favorite cars and bookmark interesting facts
-- **Car Profiles**: Detailed specs, images, historical significance, and audio clips
-- **Gamified Learning**: Trivia flashcards and mini-quizzes with points and badges
-- **Trending Section**: Real-time popular vehicles and concept cars
-- **AI-Powered Content**: Age-appropriate facts, stories, and Q&A
+**Frontend:**
+- React 18+ (SPA)
+- React Router v6 (Navigation)
+- Zustand (State Management)
+- Tailwind CSS (Styling)
+- Axios (HTTP Client)
 
-## Tech Stack
+**Backend:**
+- Java 17+
+- Spring Boot 3.3.0
+- Spring Data JPA
+- Spring Security
+- PostgreSQL
+- Hibernate ORM
 
-| Component | Technology |
-|-----------|-----------|
-| Frontend | React 18+ with Tailwind CSS |
-| Backend | Java 17+ with Springboot 3.x |
-| Database | PostgreSQL 14+ |
-| ORM | JPA/Hibernate |
-| AI Integration | Gemini API / OpenAI API |
-| Containerization | Docker & docker-compose |
+**DevOps:**
+- Docker & Docker Compose
+- Multi-container orchestration
 
-## Project Structure
+## 🚀 Quick Start with Docker
+
+### Prerequisites
+- Docker & Docker Compose
+- Git
+
+### Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/vivekmurugesan/cars-app.git
+   cd cars-app
+   ```
+
+2. **Build and start services**
+   ```bash
+   docker-compose build
+   docker-compose up -d
+   ```
+
+3. **Access the application**
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:8080
+   - pgAdmin: http://localhost:5050
+
+4. **Verify setup**
+   ```bash
+   curl http://localhost:8080/actuator/health
+   ```
+
+## 🎯 Features
+
+### Authentication
+- OTP-based login via email
+- User registration with interest selection
+- JWT token support
+
+### Car Browsing
+- Search by brand/model
+- Filter by category, year, top speed
+- Detailed car information with facts
+- Pagination support
+
+### Personal Garage
+- Add/remove favorite cars
+- Persistent collection
+- Browse all favorites
+
+### Quizzes
+- Multiple choice questions
+- Score calculation
+- Progress tracking
+- Quiz categories
+
+### Trivia
+- Daily trivia facts
+- Category and difficulty filtering
+- Educational content
+
+## 📁 Project Structure
 
 ```
 cars-app/
-├── frontend/              # React SPA
+├── frontend/          # React SPA
 │   ├── src/
-│   ├── public/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── store/     # Zustand stores
+│   │   └── services/  # API clients
 │   └── package.json
-├── backend/              # Java Springboot
+├── backend/           # Spring Boot API
 │   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/
-│   │   │   └── resources/
-│   │   └── test/
+│   │   ├── controller/
+│   │   ├── service/
+│   │   ├── entity/
+│   │   └── repository/
 │   └── pom.xml
-├── database/             # SQL scripts
+├── database/          # DB initialization
 │   └── init.sql
-├── docker/              # Docker configurations
-│   └── Dockerfile
-├── docker-compose.yml   # Multi-container setup
-└── docs/               # Documentation
+└── docker-compose.yml
 ```
 
-## Quick Start
+## 📡 Key API Endpoints
 
-### Prerequisites
-- Docker & docker-compose
-- Node.js 18+ (for local frontend development)
-- Java 17+ (for local backend development)
-- PostgreSQL 14+ (for local database)
+### Authentication
+- `POST /api/auth/send-otp` - Send OTP
+- `POST /api/auth/verify-otp` - Verify and login
+- `POST /api/auth/register` - User registration
+- `GET /api/auth/profile` - Get profile
 
-### Using Docker Compose (Recommended)
+### Cars
+- `GET /api/cars` - All cars
+- `GET /api/cars/search?query=...` - Search cars
+- `GET /api/cars/{id}` - Car details
+- `GET /api/cars/category/{cat}` - By category
 
+### Garage
+- `GET /api/garage/{userId}` - User's cars
+- `POST /api/garage/{userId}/add/{carId}` - Add car
+- `DELETE /api/garage/{userId}/remove/{carId}` - Remove car
+
+### Quizzes
+- `GET /api/quiz` - All quizzes
+- `GET /api/quiz/{id}` - Quiz details
+- `POST /api/quiz/{id}/submit` - Submit answers
+
+### Trivia
+- `GET /api/trivia` - All trivia
+- `GET /api/trivia/daily` - Daily fact
+
+## 🌐 Frontend Pages
+
+- **Home**: Dashboard with featured cars and daily trivia
+- **Search**: Car catalog with filters and search
+- **Car Details**: Detailed info with add-to-garage option
+- **My Garage**: User's favorite cars collection
+- **Quizzes**: Quiz selection and interactive interface
+- **Trivia**: Trivia facts with category/difficulty filters
+- **Profile**: User account and preferences
+- **Login/Register**: Authentication flows
+
+## 🛠️ Local Development
+
+### Backend
 ```bash
-# Clone and navigate to project
-cd cars-app
-
-# Start all services
-docker-compose up -d
-
-# Access the app
-# Frontend: http://localhost:3000
-# Backend API: http://localhost:8080
-# Database: localhost:5432
+cd backend
+mvn clean install
+mvn spring-boot:run
 ```
 
-### Local Development
-
-#### Frontend
+### Frontend
 ```bash
 cd frontend
 npm install
 npm start
 ```
 
-#### Backend
-```bash
-cd backend
-mvn clean spring-boot:run
-```
+## 📊 Database Schema
 
-## API Documentation
+Main tables:
+- users, otps, car_brands, cars
+- car_images, car_facts, user_garage
+- quizzes, quiz_questions, quiz_options
+- user_quiz_progress, trivia_facts, daily_trivia
 
-### Authentication Endpoints
-- `POST /api/auth/send-otp` - Send OTP to email
-- `POST /api/auth/verify-otp` - Verify OTP and login
-- `POST /api/auth/logout` - Logout user
+## 🔐 Security
 
-### User Endpoints
-- `GET /api/users/profile` - Get user profile
-- `PUT /api/users/profile` - Update user profile
-- `PUT /api/users/interests` - Update car interests
+- CORS restricted to localhost
+- OTP email verification
+- JWT tokens
+- Input validation
+- SQL injection prevention
 
-### Car Endpoints
-- `GET /api/cars` - List cars with filters
-- `GET /api/cars/{id}` - Get car details
-- `GET /api/cars/trending` - Get trending cars
-- `GET /api/cars/daily` - Car of the Day
+## 📝 Environment Setup
 
-### Garage Endpoints
-- `GET /api/garage` - Get user's favorite cars
-- `POST /api/garage/{carId}` - Add car to garage
-- `DELETE /api/garage/{carId}` - Remove from garage
-
-### Trivia & Quiz Endpoints
-- `GET /api/trivia/daily` - Daily trivia facts
-- `GET /api/quiz` - Get quizzes
-- `POST /api/quiz/{id}/submit` - Submit quiz answers
-
-### Search Endpoints
-- `GET /api/search/cars` - Search cars with filters
-- `GET /api/search/suggestions` - Auto-suggestions
-
-## Environment Configuration
-
-Create a `.env` file in the root directory:
-
+Create `.env` file:
 ```env
-# Database
-DATABASE_URL=postgresql://postgres:password@db:5432/cars_app
-DATABASE_USER=postgres
-DATABASE_PASSWORD=password
+DB_PORT=5432
+POSTGRES_PASSWORD=password
 
-# AI Integration
-AI_API_KEY=your_gemini_or_openai_key
-AI_PROVIDER=gemini  # or openai
-
-# Backend
-JAVA_ENV=production
-SERVER_PORT=8080
-
-# Frontend
 REACT_APP_API_URL=http://localhost:8080/api
-REACT_APP_ENV=production
+REACT_APP_ENV=development
+
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-app-password
 ```
 
-## Database Schema
+## 🐛 Troubleshooting
 
-The database includes tables for:
-- **users**: User accounts and authentication
-- **user_interests**: Car brands and categories of interest
-- **cars**: Car catalog with specs and metadata
-- **car_images**: High-quality car images
-- **car_facts**: Interesting facts about cars
-- **garage**: User favorite cars
-- **quizzes**: Quiz questions and answers
-- **quiz_progress**: User quiz performance
-- **trivia**: Daily trivia facts
-- **user_bookmarks**: Bookmarked facts and content
+**Frontend not loading?**
+- Clear cache: `docker-compose build --no-cache frontend`
 
-## Development Workflow
+**Backend 404?**
+- Check logs: `docker-compose logs backend`
+- Verify health: `curl http://localhost:8080/actuator/health`
 
-1. **Frontend Development**: React components with kid-friendly design
-2. **Backend Development**: RESTful API endpoints with proper validation
-3. **Database**: SQL migrations for schema updates
-4. **Testing**: Unit tests for both frontend and backend
-5. **Deployment**: Docker containers for production
+**Database issues?**
+- Check status: `docker-compose ps`
+- View logs: `docker-compose logs db`
 
-## Security Considerations
-
-- OTP-based authentication (no passwords stored)
-- Input validation on all endpoints
-- Rate limiting on API endpoints
-- HTTPS in production
-- Safe AI content filtering for kids
-- CORS configuration for frontend communication
-- Environment-based configuration (no secrets in code)
-
-## Deployment
-
-### Docker Deployment
+## 🚀 Deployment
 
 ```bash
-# Build images
-docker-compose build
-
-# Run containers
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
+docker-compose -f docker-compose.yml up -d
 ```
 
-### Production Checklist
-- [ ] Set strong database password
-- [ ] Configure AI API keys
-- [ ] Enable HTTPS/SSL
-- [ ] Set up monitoring and logging
-- [ ] Configure backups
-- [ ] Set up CI/CD pipeline
-
-## Contributing
-
-1. Create a feature branch
-2. Make your changes
-3. Test thoroughly
-4. Submit a pull request
-
-## License
-
-Proprietary - All rights reserved
-
-## Support
-
-For issues or questions, contact the development team.
+For production, update:
+- HTTPS/SSL configuration
+- Database credentials
+- Email service credentials
+- CORS origins
 
 ---
 
-**Last Updated**: August 2026
+**Created with ❤️ for kids learning about cars! 🏎️**
