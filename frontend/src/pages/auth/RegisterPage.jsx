@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import useAuthStore from '../../store/authStore';
+import api from '../../services/api';
 
 const INTERESTS = [
   { id: 'LEARN_ABOUT_CARS', label: '🚗 Learn About Cars' },
@@ -14,10 +15,19 @@ const INTERESTS = [
 
 const RegisterPage = () => {
   const [email, setEmail] = useState('');
+  const [otp, setOtp] = useState('');
   const [interests, setInterests] = useState([]);
   const [buttonLoading, setButtonLoading] = useState(false);
   const navigate = useNavigate();
   const { register, sendOtp, authStep, setAuthStep } = useAuthStore();
+
+  useEffect(() => {
+    // Reset auth step when component mounts to ensure fresh registration flow
+    setAuthStep('email');
+    setEmail('');
+    setOtp('');
+    setInterests([]);
+  }, []);
 
   useEffect(() => {
     console.log('RegisterPage authStep changed to:', authStep);
@@ -34,9 +44,30 @@ const RegisterPage = () => {
     setButtonLoading(false);
     if (success) {
       toast.success('OTP sent to your email!');
-      setAuthStep('interests');
+      setAuthStep('otp');
     } else {
       toast.error('Failed to send OTP');
+    }
+  };
+
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    if (!otp.trim()) {
+      toast.error('Please enter the OTP');
+      return;
+    }
+    console.log('handleVerifyOtp: email=', email, 'otp=', otp);
+    setButtonLoading(true);
+    try {
+      // Verify OTP with backend
+      await api.post('/auth/verify-otp', { email, otp });
+      toast.success('OTP verified!');
+      setButtonLoading(false);
+      setAuthStep('interests');
+    } catch (error) {
+      setButtonLoading(false);
+      const errorMsg = error.response?.data?.error || 'OTP verification failed';
+      toast.error(errorMsg);
     }
   };
 
@@ -99,6 +130,42 @@ const RegisterPage = () => {
                 {buttonLoading ? 'Sending...' : 'Continue'}
               </button>
             </form>
+          ) : authStep === 'otp' ? (
+            <form onSubmit={handleVerifyOtp} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  OTP Code
+                </label>
+                <input
+                  type="text"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  placeholder="000000"
+                  maxLength="6"
+                  className="input-field text-center text-2xl tracking-widest"
+                  disabled={buttonLoading}
+                />
+                <p className="text-sm text-gray-500 mt-2">
+                  Check your email for the OTP code
+                </p>
+              </div>
+
+              <button
+                type="submit"
+                disabled={buttonLoading}
+                className="btn btn-primary w-full"
+              >
+                {buttonLoading ? 'Verifying...' : 'Verify OTP'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setAuthStep('email')}
+                className="btn btn-secondary w-full"
+              >
+                Back
+              </button>
+            </form>
           ) : (
             <form onSubmit={handleRegister} className="space-y-4">
               <div>
@@ -133,7 +200,10 @@ const RegisterPage = () => {
 
               <button
                 type="button"
-                onClick={() => setAuthStep('email')}
+                onClick={() => {
+                  setOtp('');
+                  setAuthStep('email');
+                }}
                 className="btn btn-secondary w-full"
               >
                 Back
