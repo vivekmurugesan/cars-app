@@ -24,6 +24,9 @@ public class SecurityConfig {
           .disable()
         .authorizeHttpRequests((authz) -> authz
             .requestMatchers("/api/auth/**").permitAll()
+            .requestMatchers("/api/cars/**").permitAll()
+            .requestMatchers("/api/trivia/**").permitAll()
+            .requestMatchers("/api/quizzes/**").permitAll()
             .requestMatchers("/actuator/**").permitAll()
             .anyRequest().authenticated()
         )
