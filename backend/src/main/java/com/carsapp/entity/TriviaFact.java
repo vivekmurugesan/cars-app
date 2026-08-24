@@ -23,6 +23,12 @@ public class TriviaFact {
     private String difficulty;
     private String category;
 
+    @Column(name = "image_search_terms")
+    private String imageSearchTerms;
+
+    @Column(name = "video_search_terms")
+    private String videoSearchTerms;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

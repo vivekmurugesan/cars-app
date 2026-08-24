@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class QuizService {
     private final QuizRepository quizRepository;
     private final UserQuizProgressRepository userQuizProgressRepository;
@@ -48,6 +50,7 @@ public class QuizService {
         return convertToDto(quiz);
     }
 
+    @Transactional
     public void submitQuizAnswers(UUID userId, UUID quizId, List<UUID> selectedOptions) {
         Quiz quiz = quizRepository.findById(quizId)
             .orElseThrow(() -> new IllegalArgumentException("Quiz not found"));

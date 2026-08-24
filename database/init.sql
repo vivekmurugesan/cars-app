@@ -121,6 +121,8 @@ CREATE TABLE trivia_facts (
     fact TEXT NOT NULL,
     difficulty VARCHAR(20),
     category VARCHAR(100),
+    image_search_terms VARCHAR(500),
+    video_search_terms VARCHAR(500),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -310,13 +312,13 @@ VALUES
 ON CONFLICT (name) DO NOTHING;
 
 -- Sample trivia
-INSERT INTO trivia_facts (fact, difficulty, category)
+INSERT INTO trivia_facts (fact, difficulty, category, image_search_terms, video_search_terms)
 VALUES
-    ('The first car with an internal combustion engine was built in 1885 by Karl Benz!', 'easy', 'history'),
-    ('Ferrari has never built a 4-cylinder car in its history!', 'medium', 'brands'),
-    ('The fastest production car in the world is the Bugatti Bolide with a top speed of 330 mph!', 'hard', 'speed'),
-    ('Electric vehicles produce zero emissions!', 'easy', 'environment'),
-    ('The first traffic light was installed in 1868 in London!', 'medium', 'history')
+    ('The first car with an internal combustion engine was built in 1885 by Karl Benz!', 'easy', 'history', 'Karl Benz 1885 automobile', 'History of the automobile'),
+    ('Ferrari has never built a 4-cylinder car in its history!', 'medium', 'brands', 'Ferrari super cars collection', 'Ferrari engine types and history'),
+    ('The fastest production car in the world is the Bugatti Bolide with a top speed of 330 mph!', 'hard', 'speed', 'Bugatti Bolide hypercar', 'Bugatti Bolide speed record'),
+    ('Electric vehicles produce zero emissions!', 'easy', 'environment', 'Electric vehicle charging', 'How electric cars work'),
+    ('The first traffic light was installed in 1868 in London!', 'medium', 'history', 'First traffic light history', 'Evolution of traffic lights')
 ON CONFLICT DO NOTHING;
 
 -- Sample quizzes with questions

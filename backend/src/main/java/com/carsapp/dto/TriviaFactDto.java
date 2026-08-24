@@ -14,4 +14,6 @@ public class TriviaFactDto {
     private String fact;
     private String difficulty;
     private String category;
+    private String imageSearchTerms;
+    private String videoSearchTerms;
 }

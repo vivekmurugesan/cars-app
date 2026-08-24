@@ -106,7 +106,9 @@ public class TriviaService {
             trivia.getId(),
             trivia.getFact(),
             trivia.getDifficulty(),
-            trivia.getCategory()
+            trivia.getCategory(),
+            trivia.getImageSearchTerms(),
+            trivia.getVideoSearchTerms()
         );
     }
 }
