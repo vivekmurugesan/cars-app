@@ -4,6 +4,7 @@ import useCarStore from '../../store/carStore';
 import useGarageStore from '../../store/garageStore';
 import useAuthStore from '../../store/authStore';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import api from '../../services/api';
 
 const CarDetailsPage = () => {
   const { id } = useParams();
@@ -14,6 +15,8 @@ const CarDetailsPage = () => {
   const { addCarToGarage, removeCarFromGarage, isCarInGarage } = useGarageStore();
   const [inGarage, setInGarage] = useState(false);
   const [isAddingToGarage, setIsAddingToGarage] = useState(false);
+  const [aiDetails, setAiDetails] = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
 
   useEffect(() => {
     getCarDetails(id);
@@ -25,9 +28,30 @@ const CarDetailsPage = () => {
     }
   }, [currentCar, user]);
 
+  useEffect(() => {
+    if (currentCar && currentCar.brandName && currentCar.model) {
+      fetchAIDetails();
+    }
+  }, [currentCar]);
+
   const checkIfInGarage = async () => {
     const result = await isCarInGarage(user.id, id);
     setInGarage(result);
+  };
+
+  const fetchAIDetails = async () => {
+    setAiLoading(true);
+    try {
+      const carName = `${currentCar.brandName} ${currentCar.model}`;
+      const response = await api.get('/cars/ai/details', {
+        params: { carName }
+      });
+      setAiDetails(response.data);
+    } catch (error) {
+      console.log('AI details not available:', error);
+    } finally {
+      setAiLoading(false);
+    }
   };
 
   const handleGarageToggle = async () => {
@@ -158,27 +182,74 @@ const CarDetailsPage = () => {
             )}
 
             {currentCar.funFact && (
-              <div className="card p-6 bg-blue-50 border-l-4 border-blue-500">
+              <div className="card p-6 bg-blue-50 border-l-4 border-blue-500 mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">🎯 Fun Fact</h2>
                 <p className="text-gray-700 leading-relaxed">{currentCar.funFact}</p>
               </div>
             )}
+
+            {/* AI-Generated Details */}
+            {aiLoading && (
+              <div className="card p-6 mb-6">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">🤖 Loading more details...</span>
+                  <div className="animate-spin">⏳</div>
+                </div>
+              </div>
+            )}
+
+            {aiDetails && !aiLoading && (
+              <>
+                {aiDetails.description && currentCar.description !== aiDetails.description && (
+                  <div className="card p-6 mb-6 bg-gradient-to-r from-purple-50 to-pink-50 border-l-4 border-purple-500">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">🤖 AI Insights</h2>
+                    <p className="text-gray-700 leading-relaxed">{aiDetails.description}</p>
+                  </div>
+                )}
+
+                {aiDetails.historicalSignificance && currentCar.historicalSignificance !== aiDetails.historicalSignificance && (
+                  <div className="card p-6 mb-6 bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-500">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">📖 More History</h2>
+                    <p className="text-gray-700 leading-relaxed">{aiDetails.historicalSignificance}</p>
+                  </div>
+                )}
+
+                {aiDetails.funFact && currentCar.funFact !== aiDetails.funFact && (
+                  <div className="card p-6 bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">✨ Amazing Fact</h2>
+                    <p className="text-gray-700 leading-relaxed">{aiDetails.funFact}</p>
+                  </div>
+                )}
+              </>
+            )}
           </div>
 
           {/* Facts Section */}
-          {currentCar.facts && currentCar.facts.length > 0 && (
+          {(currentCar.facts && currentCar.facts.length > 0) || aiDetails ? (
             <div className="card p-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">💡 Facts</h2>
               <ul className="space-y-2">
-                {currentCar.facts.map((fact, idx) => (
-                  <li key={idx} className="flex gap-2 text-sm text-gray-700">
+                {currentCar.facts && currentCar.facts.map((fact, idx) => (
+                  <li key={`fact-${idx}`} className="flex gap-2 text-sm text-gray-700">
                     <span className="text-blue-600 font-bold">•</span>
                     <span>{fact}</span>
                   </li>
                 ))}
+                {aiDetails && aiDetails.topSpeed && (
+                  <li className="flex gap-2 text-sm text-gray-700">
+                    <span className="text-red-600 font-bold">⚡</span>
+                    <span>Top Speed: {aiDetails.topSpeed} mph</span>
+                  </li>
+                )}
+                {aiDetails && aiDetails.horsepower && (
+                  <li className="flex gap-2 text-sm text-gray-700">
+                    <span className="text-orange-600 font-bold">💪</span>
+                    <span>Horsepower: {aiDetails.horsepower} hp</span>
+                  </li>
+                )}
               </ul>
             </div>
-          )}
+          ) : null}
         </div>
 
         {/* Related Cars */}
