@@ -4,11 +4,15 @@ import useCarStore from '../../store/carStore';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import CarCard from '../../components/common/CarCard';
 import Pagination from '../../components/common/Pagination';
+import api from '../../services/api';
 
 const SearchPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [category, setCategory] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
+  const [aiCarName, setAiCarName] = useState('');
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiResult, setAiResult] = useState(null);
 
   const { cars, isLoading, totalPages, currentPage } = useCarStore();
   const searchCars = useCarStore((state) => state.searchCars);
@@ -45,6 +49,24 @@ const SearchPage = () => {
       getCarsByCategory(category, page);
     } else {
       getAllCars(page);
+    }
+  };
+
+  const handleFetchAICarDetails = async () => {
+    if (!aiCarName.trim()) return;
+
+    setAiLoading(true);
+    setAiResult(null);
+    try {
+      const response = await api.get('/cars/ai/details', {
+        params: { carName: aiCarName }
+      });
+      setAiResult(response.data);
+    } catch (error) {
+      console.error('Error fetching AI car details:', error);
+      setAiResult({ error: 'Failed to fetch car details' });
+    } finally {
+      setAiLoading(false);
     }
   };
 
@@ -105,6 +127,79 @@ const SearchPage = () => {
               </button>
             </div>
           </div>
+        </div>
+
+        {/* AI Car Details Finder */}
+        <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl p-6 mb-8 border-2 border-purple-300">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">🤖 Find Car Details with AI</h2>
+          <p className="text-gray-700 mb-4">Enter any car name and our AI will find detailed information about it!</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <input
+                type="text"
+                value={aiCarName}
+                onChange={(e) => setAiCarName(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleFetchAICarDetails()}
+                placeholder="e.g., Tesla Model S, Bugatti Chiron"
+                className="input-field"
+              />
+            </div>
+            <div></div>
+            <div className="flex items-end">
+              <button
+                onClick={handleFetchAICarDetails}
+                disabled={aiLoading || !aiCarName.trim()}
+                className="btn btn-primary w-full"
+              >
+                {aiLoading ? '🔄 Loading...' : '🚀 Get Details'}
+              </button>
+            </div>
+          </div>
+
+          {aiResult && !aiLoading && (
+            <div className="mt-6 p-4 bg-white rounded-lg border-2 border-purple-300">
+              {aiResult.error ? (
+                <p className="text-red-600">{aiResult.error}</p>
+              ) : (
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-sm text-gray-600">Brand & Model</p>
+                    <p className="font-bold text-gray-900">{aiResult.brand} {aiResult.model}</p>
+                  </div>
+                  {aiResult.year && (
+                    <div>
+                      <p className="text-sm text-gray-600">Year</p>
+                      <p className="font-bold text-gray-900">{aiResult.year}</p>
+                    </div>
+                  )}
+                  {aiResult.topSpeed && (
+                    <div>
+                      <p className="text-sm text-gray-600">Top Speed</p>
+                      <p className="font-bold text-gray-900">⚡ {aiResult.topSpeed} mph</p>
+                    </div>
+                  )}
+                  {aiResult.horsepower && (
+                    <div>
+                      <p className="text-sm text-gray-600">Horsepower</p>
+                      <p className="font-bold text-gray-900">💪 {aiResult.horsepower} hp</p>
+                    </div>
+                  )}
+                  {aiResult.description && (
+                    <div>
+                      <p className="text-sm text-gray-600">Description</p>
+                      <p className="text-gray-700">{aiResult.description}</p>
+                    </div>
+                  )}
+                  {aiResult.funFact && (
+                    <div>
+                      <p className="text-sm text-gray-600">Fun Fact</p>
+                      <p className="text-gray-700 italic">✨ {aiResult.funFact}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Results */}

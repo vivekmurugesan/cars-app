@@ -86,4 +86,17 @@ public class CarController {
     public ResponseEntity<Map<String, Object>> getCarDetailsWithAI(@RequestParam String carName) {
         return ResponseEntity.ok(aiService.getCarDetails(carName));
     }
+
+    @PostMapping("/ai/generate")
+    public ResponseEntity<Map<String, Object>> generateCarWithAI(@RequestParam String carName, @RequestParam String category) {
+        try {
+            Map<String, Object> details = aiService.getCarDetails(carName);
+            if (details != null) {
+                return ResponseEntity.ok(details);
+            }
+            return ResponseEntity.status(500).body(Map.of("error", "Failed to generate car details"));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
+        }
+    }
 }
