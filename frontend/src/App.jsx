@@ -11,6 +11,7 @@ import SearchPage from './pages/search/SearchPage';
 import CarDetailsPage from './pages/cars/CarDetailsPage';
 import GaragePage from './pages/garage/GaragePage';
 import QuizPage from './pages/quiz/QuizPage';
+import QuizDetailPage from './pages/quiz/QuizDetailPage';
 import TriviaPage from './pages/trivia/TriviaPage';
 import ProfilePage from './pages/profile/ProfilePage';
 import NotFoundPage from './pages/errors/NotFoundPage';
@@ -46,6 +47,7 @@ function App() {
           <Route path="/cars/:id" element={<CarDetailsPage />} />
           <Route path="/garage" element={<GaragePage />} />
           <Route path="/quiz" element={<QuizPage />} />
+          <Route path="/quiz/:id" element={<QuizDetailPage />} />
           <Route path="/trivia" element={<TriviaPage />} />
           <Route path="/profile" element={<ProfilePage />} />
         </Route>
