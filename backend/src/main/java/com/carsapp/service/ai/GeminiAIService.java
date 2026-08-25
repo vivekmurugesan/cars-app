@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
+import jakarta.annotation.PostConstruct;
 
 @Service
 @Slf4j
@@ -23,13 +24,22 @@ public class GeminiAIService {
     @Value("${app.ai.api-key:}")
     private String apiKey;
 
-    @Value("${app.ai.model:gemini-pro}")
+    @Value("${app.ai.model:gemini-1.5-flash}")
     private String model;
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
     private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent";
+    private static final String GEMINI_MODELS_URL = "https://generativelanguage.googleapis.com/v1beta/models";
+
+    @PostConstruct
+    public void init() {
+        if (apiKey != null && !apiKey.isEmpty()) {
+            log.info("Gemini API configured with model: {}", model);
+            listAvailableModels();
+        }
+    }
 
     /**
      * Generate trivia content using Gemini API
@@ -236,5 +246,32 @@ public class GeminiAIService {
      */
     public boolean isConfigured() {
         return apiKey != null && !apiKey.isEmpty();
+    }
+
+    /**
+     * List available Gemini models
+     */
+    public void listAvailableModels() {
+        try {
+            String url = GEMINI_MODELS_URL + "?key=" + apiKey;
+            var response = restTemplate.getForEntity(url, String.class);
+
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                JsonNode root = objectMapper.readTree(response.getBody());
+                if (root.has("models") && root.get("models").isArray()) {
+                    log.info("=== Available Gemini Models ===");
+                    root.get("models").forEach(model -> {
+                        String modelName = model.get("name").asText();
+                        String displayName = model.get("displayName").asText();
+                        String description = model.has("description") ? model.get("description").asText() : "No description";
+                        log.info("Model: {} ({})", modelName, displayName);
+                        log.info("  Description: {}", description);
+                    });
+                    log.info("================================");
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Failed to list available Gemini models: {}", e.getMessage());
+        }
     }
 }

@@ -47,8 +47,10 @@ const useQuizStore = create((set) => ({
         currentQuiz: response.data,
         isLoading: false,
       });
+      return response.data;
     } catch (error) {
       set({ error: error.message, isLoading: false });
+      return null;
     }
   },
 
