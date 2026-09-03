@@ -24,7 +24,7 @@ public class GeminiAIService {
     @Value("${app.ai.api-key:}")
     private String apiKey;
 
-    @Value("${app.ai.model:gemini-1.5-flash}")
+    @Value("${app.ai.model:gemini-pro-vision}")
     private String model;
 
     private final RestTemplate restTemplate;
@@ -236,7 +236,10 @@ public class GeminiAIService {
                 }
             }
         } catch (Exception e) {
-            log.error("Error calling Gemini API", e);
+            log.error("Error calling Gemini API with model '{}': {}", model, e.getMessage());
+            if (e.getMessage() != null && e.getMessage().contains("404")) {
+                log.error("Model '{}' not found. Available models can be listed by calling the listAvailableModels() method or using: curl 'https://generativelanguage.googleapis.com/v1beta/models?key=YOUR_API_KEY'", model);
+            }
         }
         return null;
     }
