@@ -238,7 +238,8 @@ public class GeminiAIService {
         } catch (Exception e) {
             log.error("Error calling Gemini API with model '{}': {}", model, e.getMessage());
             if (e.getMessage() != null && e.getMessage().contains("404")) {
-                log.error("Model '{}' not found. Available models can be listed by calling the listAvailableModels() method or using: curl 'https://generativelanguage.googleapis.com/v1beta/models?key=YOUR_API_KEY'", model);
+                log.error("Model '{}' not found or does not support generateContent. Printing available models now:", model);
+                listAvailableModels();
             }
         }
         return null;
@@ -262,16 +263,32 @@ public class GeminiAIService {
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 JsonNode root = objectMapper.readTree(response.getBody());
                 if (root.has("models") && root.get("models").isArray()) {
-                    log.info("=== Available Gemini Models ===");
-                    root.get("models").forEach(model -> {
-                        String modelName = model.get("name").asText();
-                        String displayName = model.get("displayName").asText();
-                        String description = model.has("description") ? model.get("description").asText() : "No description";
-                        log.info("Model: {} ({})", modelName, displayName);
-                        log.info("  Description: {}", description);
-                    });
-                    log.info("================================");
+                    log.info("=== Available Gemini Models (key: ...{}) ===",
+                        apiKey.length() > 4 ? apiKey.substring(apiKey.length() - 4) : "****");
+                    for (JsonNode modelNode : root.get("models")) {
+                        String modelName = modelNode.get("name").asText();
+                        String displayName = modelNode.has("displayName") ? modelNode.get("displayName").asText() : "";
+                        boolean supportsGenerateContent = false;
+                        StringBuilder methods = new StringBuilder();
+                        if (modelNode.has("supportedGenerationMethods")) {
+                            for (JsonNode m : modelNode.get("supportedGenerationMethods")) {
+                                String methodName = m.asText();
+                                methods.append(methodName).append(", ");
+                                if ("generateContent".equals(methodName)) {
+                                    supportsGenerateContent = true;
+                                }
+                            }
+                        }
+                        if (supportsGenerateContent) {
+                            log.info(">>> USABLE: {} ({}) - methods: [{}]", modelName, displayName, methods);
+                        } else {
+                            log.info("    skip:   {} ({}) - methods: [{}]", modelName, displayName, methods);
+                        }
+                    }
+                    log.info("=== Set AI_MODEL to one of the '>>> USABLE' names above (without the 'models/' prefix) ===");
                 }
+            } else {
+                log.warn("ListModels call returned status {}", response.getStatusCode());
             }
         } catch (Exception e) {
             log.warn("Failed to list available Gemini models: {}", e.getMessage());
